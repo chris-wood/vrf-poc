@@ -22,19 +22,20 @@ Note: I did not check the RSA-based VRF test vectors or pseudocode closely.
       conversions are not needed" --> it seems worth clarifying that this is
   is true iff the libraries return strings that are encoded in the same way
   as required by the corresponding ciphersuites, for interoperability reasons.
-- Section 5. If not done already, it seems worth noting that private key generation 
-  functions are specified by the ciphersuite.
-- Section 5.3. Does the verification check need to be done in constant time?
+- Section 5.3. It might be worth noting that the verification check does not
+  need to be done in constant time as it's a public operation. (The comparison
+  check at the end might lead one to ask whether or not it needs to be constant
+  time, so calling it out early would clarify.)
 - Section 5.4.4. Remove "let" in "let <variable> = ..." statements, as this
   is not done in other functions where variables are declared and initialized.
 - Section 5.6. It's noted that the procedure in this section does not work if either
   the curve or generator are untrusted, but aren't these both fixed for the suites
   in this document? If so, I might remove this paragraph.
 - Section 5.6.1. Do implementations for curves with small cofactors perform validation
-  by checking against known points? If this isn't common, I would simply remove the
-  variant for ed25519, as it just seems simpler to clear the cofactor and check against
-  the identity element. Conversely, the hash-to-curve document has specific cofactor 
-  clearing suggestions for each curve, and it seems reasonable to be opinionated in
+  by checking against known points? I don't know! If this isn't common, I would simply 
+  remove the variant for ed25519, as it just seems simpler to clear the cofactor and 
+  check against the identity element. Conversely, the hash-to-curve document has specific 
+  cofactor clearing suggestions for each curve, and it seems reasonable to be opinionated in
   this document, too. One might even just re-use the methods in draft-irtf-cfrg-hash-to-curve
   for P-256 and ed25519.
 - Section 7.1. Recommendations for randomness generation can probably be cribbed
@@ -47,8 +48,6 @@ Note: I did not check the RSA-based VRF test vectors or pseudocode closely.
   one of the options in either 5.4.1.1 or 5.4.1.2.
 - In some places the public key is denoted as Y (Section 7.1.1), but in others it's 
   denoted as PK. Perhaps these should be consistent?
-- Out of curiosity, why was PSS with zero-length salt not used for the RSA variant?
-  I assume it was a matter of simplicity, as PSS is more complex than FDH.
 
 '''
 
