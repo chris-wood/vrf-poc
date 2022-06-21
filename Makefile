@@ -15,12 +15,12 @@ sagelib/%.py: %.sage
 	@mv $<.py $@
 
 test: pyfiles
-	sage frost.sage
+	sage vrf.sage
 
 .PHONY: clean
 clean:
 	rm -rf sagelib *.pyc *.sage.py *.log __pycache__
 
 setup:
-	git submodule update --remote 
+	git submodule update --remote
 	cp h2c/poc/*.sage h2c/poc/*.py .
