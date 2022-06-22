@@ -109,23 +109,10 @@ def point_decompress(s):
 def secret_expand(secret):
     if len(secret) != 32:
         raise Exception("Bad size of private key")
-    import binascii
-    print("sk", binascii.hexlify(secret))
-    # h = list(sha512(secret))
     h = sha512(secret)
-    # print("hash(sk)", binascii.hexlify(bytes(h)))
-
-    # h[0]&=0xF8
-    # h[31]&=0x7F
-    # h[31]|=0x40
-    
-    # a = int.from_bytes(bytes(h)[:32], "little")
     a = int.from_bytes(h[:32], "little")
     a &= (1 << 254) - 8
     a |= (1 << 254)
-
-    # print("clamped", binascii.hexlify(bytes(h)))
-
     return (a, bytes(h)[32:])
 
 def secret_to_public(secret):

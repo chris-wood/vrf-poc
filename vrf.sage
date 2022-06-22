@@ -8,7 +8,7 @@ import binascii
 import struct
 
 from hash_to_field import I2OSP, OS2IP
-from ed25519_rfc8032 import secret_expand, sha512_modq, q
+from ed25519_rfc8032 import secret_expand, sha512_modq
 
 if sys.version_info[0] == 3:
     xrange = range
@@ -53,8 +53,7 @@ class ECVRF(object):
     def __init__(self, G, H, suite_string, h2c_suite):
         self.G = G
         self.H = H
-        # self.cLen = ceil(G.field_bytes_length / 2)
-        self.ptLen = G.element_byte_length() # 1 + G.field_bytes_length
+        self.ptLen = G.element_byte_length()
         self.qLen = ceil(log(G.order(), 2) / 8)
         self.hLen = H().digest_size
         self.suite_string = suite_string
