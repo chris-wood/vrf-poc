@@ -235,14 +235,14 @@ class GroupEd25519(Group):
     def identity(self):
         return self.curve(0)
 
-    def _serialize(self, u, v):
+    def inner_serialize(self, u, v):
         sign = int(int(u) % 2)
         return int.to_bytes(int(v) | (sign << 255), 32, "little")
 
     def serialize(self, element):
         (x, y) = element.xy()
         (u, v) = GroupEd25519.to_twistededwards(self.a, self.d, x, y)
-        return self._serialize(u, v)
+        return self.inner_serialize(u, v)
 
     def deserialize(self, encoded):
         if len(encoded) != 32:
@@ -270,13 +270,9 @@ class GroupEd25519(Group):
     def hash_to_group(self, msg, dst):
         suite = edw25519_sha512_nu
         suite.expand._dst = dst
-        output = suite(msg)
-        print("hash_to_group point", output)
-        enc = self._serialize(output[0], output[1])
-        print("hash_to_group enc", enc)
-        output = self.deserialize(enc)
-        print("hash_to_group output", output)
-        return output
+        point = suite(msg)
+        enc = self.inner_serialize(point[0], point[1])
+        return self.deserialize(enc)
 
     def hash_to_scalar(self, msg, dst=""):
         # From RFC8032. Note that the DST is ignored.

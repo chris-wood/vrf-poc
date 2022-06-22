@@ -79,27 +79,18 @@ class ECVRF(object):
     # https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf-09#section-5.1
     def prove(self, SK, alpha_string):
         x = self.derive_scalar_from_SK(SK)
-        print("x", hex(x))
         cLen = self.cLen
         qLen = self.qLen
         B = self.G.generator()
 
         Y = x * B
         PK_string = self.point_to_string(Y)
-        print("PK", binascii.hexlify(PK_string))
         H = self.encode_to_curve(PK_string, alpha_string)
         h_string = self.point_to_string(H)
-        print("H", binascii.hexlify(h_string))
         Gamma = x * H
         k = self.nonce_generation(SK, h_string)
-        print("k", hex(k))
         c = self.challenge_generation([Y, H, Gamma, k * B, k * H])
-        
         s = (k + (c * x)) % self.G.order()
-
-        print("U prove", binascii.hexlify(self.point_to_string(k * B)))
-        print("V prove", binascii.hexlify(self.point_to_string(k * H)))
-
         pi_string = self.point_to_string(Gamma) + self.int_to_string(c, cLen) + self.int_to_string(s, qLen)
 
         return pi_string
@@ -127,9 +118,6 @@ class ECVRF(object):
         H = self.encode_to_curve(PK_string, alpha_string)
         U = (s * B) - (c * Y)
         V = (s * H) - (c * Gamma)
-
-        print("U", binascii.hexlify(self.point_to_string(U)))
-        print("V", binascii.hexlify(self.point_to_string(V)))
         c_prime = self.challenge_generation([Y, H, Gamma, U, V])
         return c == c_prime
 
@@ -354,7 +342,6 @@ if __name__ == "__main__":
     for vector in vrf_vectors:
         for t in vector["tests"]:
             vrf = vector["vrf"]()
-            print("Checking VRF", vrf)
             SK = binascii.unhexlify(t["SK"])
             PK = vrf.G.deserialize(binascii.unhexlify(t["PK"]))
             alpha_string = binascii.unhexlify(t["alpha"])
@@ -364,8 +351,6 @@ if __name__ == "__main__":
             pi_string = vrf.prove(SK, alpha_string)
             beta_string = vrf.proof_to_hash(pi_string)
             valid = vrf.verify(PK, pi_string, alpha_string)
-            print(binascii.hexlify(pi_string))
-            print(binascii.hexlify(pi_string_expected))
             assert(pi_string == pi_string_expected)
             assert(beta_string == beta_string_expected)
             assert(valid)
