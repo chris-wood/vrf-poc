@@ -246,7 +246,7 @@ class GroupEd25519(Group):
 
     def deserialize(self, encoded):
         if len(encoded) != 32:
-            raise Exception("Invalid input length for decompression")
+            raise Exception("Invalid input length for decompression", len(encoded))
         y = int.from_bytes(encoded, "little")
         sign = int(y) >> 255
         y = int(int(y) & ((1 << 255) - 1))
